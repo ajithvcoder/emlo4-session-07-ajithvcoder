@@ -2,6 +2,43 @@
 
 ### Contents
 
+Debug:
+docker build -t light_train_test -f ./Dockerfile .
+
+docker run -d -v /workspace/emlo4-session-07-ajithvcoder/:/workspace/ light_train_test 
+
+docker exec -it a72b75eb2280 /bin/bash
+
+giving previlage to user to access a folder in case if docker container locks it when mounting volume
+sudo chown $USER:$USER /workspace/emlo4-session-07-ajithvcoder/.dvc/config
+
+python src/train.py --multirun hparam=catdog_vit_hparam +trainer.log_every_n_steps=5 hydra.sweeper.n_jobs=4
+
+dvc commands
+
+uv dvc init -f
+uv run dvc remote add -d myremote gdrive://1ty6GJkbzN2ZmweDpG8yJGI8g3sEhKZus
+uv run dvc remote modify myremote gdrive_use_service_account true
+uv run dvc remote modify myremote gdrive_acknowledge_abuse true
+uv run dvc remote modify myremote --local gdrive_service_account_json_file_path credentials.json
+
+dvc remote add -d myremote gdrive://<your_gdrive_folder_id> 
+
+Download gdrive file manually -> use "uc?id="
+gdown https://drive.google.com/uc?id=1V4awkaDGr8s1aI3VGoQUs1Ao6aF8_Os3
+
+place to upload
+https://drive.google.com/drive/folders/1ty6GJkbzN2ZmweDpG8yJGI8g3sEhKZus?usp=sharing
+
+uv run dvc push -r myremote
+python src/train.py --multirun experiment=catdog_ex model.embed_dim=16,32,64 +trainer.log_every_n_steps=5
+
+uv run python src/train.py --config-name=train experiment=catdog_ex trainer.max_epochs=2
+
+uv run python src/train.py --multirun experiment=catdog_ex model.embed_dim=16,32 +trainer.log_every_n_steps=5
+
+uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64
+
 **Note: I have completed the optional assignment of integrating comet-ml**
 
 - [Requirements](#requirements)

@@ -7,3 +7,6 @@ RUN uv pip install -r pyproject.toml --no-cache-dir --extra-index-url https://do
 
 # CMD ["python", "src/train.py"]
 CMD ["tail", "-f", "/dev/null"]
+
+# uv sync --extra-index-url https://download.pytorch.org/whl/cpu
+

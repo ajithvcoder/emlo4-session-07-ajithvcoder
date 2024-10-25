@@ -3,24 +3,29 @@ import timm
 import torch
 import torch.nn.functional as F
 from torch import optim
-from torchmetrics import Accuracy
+from torchmetrics import Accuracy, MaxMetric
 from torchmetrics.classification import MulticlassConfusionMatrix
 import matplotlib.pyplot as plt
 import os
 from glob import glob
 
 class CatDogClassifier(L.LightningModule):
-    def __init__(self, base_model: str = "resnet18", pretrained=False, num_classes: int = 10, lr: float = 1e-3, **kwargs):
+    def __init__(self, base_model: str = "resnet18", pretrained=False, num_classes: int = 10,
+        lr: float = 1e-3, weight_decay: float = 0.0001, **kwargs):
         super().__init__()
         self.lr = lr
         self.num_classes = num_classes
-
+        print(kwargs)
         # Load pre-trained ResNet18 model
-        self.model = timm.create_model(base_model, pretrained=pretrained, num_classes=self.num_classes, **kwargs)
+        self.model = timm.create_model(base_model, pretrained=pretrained, 
+            num_classes=self.num_classes, 
+            )
 
         # Multi-class accuracy with num_classes=2
         self.train_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
         self.val_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
+        self.test_acc = Accuracy(task="multiclass", num_classes=self.num_classes)
+        self.test_acc_best = MaxMetric()
         self.validation_step_outputs = []
         self.train_confusion =  MulticlassConfusionMatrix(num_classes=2)
         self.test_confusion =  MulticlassConfusionMatrix(num_classes=2)
@@ -93,7 +98,7 @@ class CatDogClassifier(L.LightningModule):
         self.val_acc(preds, y)
         self.test_confusion(preds_conf, y)
         self.log("test_loss", loss, prog_bar=True, on_epoch=True)
-        self.log("test_acc", self.val_acc, prog_bar=True, on_epoch=True)
+        self.log("test_acc", self.test_acc, prog_bar=True, on_epoch=True)
     
     def on_test_epoch_end(self):
         print('CONFUSION_MATRIX:', self.test_confusion.compute())
@@ -115,3 +120,26 @@ class CatDogClassifier(L.LightningModule):
 
     def save_model(self, path):
         torch.save(self.state_dict(), path)
+
+    def configure_optimizers(self):
+        optimizer = optim.Adam(
+            self.parameters(),
+            lr=self.hparams.lr,
+            weight_decay=self.hparams.weight_decay,
+        )
+
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            factor=self.hparams.factor,
+            patience=self.hparams.patience,
+            min_lr=self.hparams.min_lr,
+        )
+
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "monitor": "val_loss",
+                "interval": "epoch",
+            },
+        }

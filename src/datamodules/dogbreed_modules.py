@@ -129,4 +129,5 @@ class DogBreedImageDataModule(L.LightningDataModule):
         return self.__dataloader(test=True)  # Using validation dataset for testing
 
     def predict_dataloader(self):
+        self._batch_size =  1
         return self.__dataloader(infer=True)  # Using validation dataset for testing

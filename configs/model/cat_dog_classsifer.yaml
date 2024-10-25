@@ -1,15 +1,15 @@
 _target_: src.models.cat_dog_classifier.CatDogClassifier
 
 # Model parameters
-base_model: mobilenetv3
-num_classes: 10
-# pretrained: true
+base_model: test_vit.r160_in1k
+num_classes: 2
+pretrained: False
 
 # Optimizer parameters
 lr: 1e-3
-# weight_decay: 1e-5
+weight_decay: 1e-5
 
 # Scheduler parameters
-# factor: 0.1
-# patience: 10
-# min_lr: 1e-6
+factor: 0.1
+patience: 10
+min_lr: 1e-6
