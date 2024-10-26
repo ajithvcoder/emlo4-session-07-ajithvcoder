@@ -7,6 +7,7 @@ from torchmetrics import Accuracy, MaxMetric
 from torchmetrics.classification import MulticlassConfusionMatrix
 import matplotlib.pyplot as plt
 import os
+import ast
 from glob import glob
 
 class CatDogClassifier(L.LightningModule):
@@ -18,7 +19,7 @@ class CatDogClassifier(L.LightningModule):
         print(kwargs)
         # Load pre-trained ResNet18 model
         self.model = timm.create_model(base_model, pretrained=pretrained, 
-            num_classes=self.num_classes, 
+            num_classes=self.num_classes, dims=ast.literal_eval(kwargs['dims']), depths=ast.literal_eval(kwargs['depths'])
             )
 
         # Multi-class accuracy with num_classes=2
