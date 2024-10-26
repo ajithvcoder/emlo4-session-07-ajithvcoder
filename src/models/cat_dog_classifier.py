@@ -52,7 +52,7 @@ class CatDogClassifier(L.LightningModule):
         fig_, ax_ = self.train_confusion.plot()
         
         # Find the most recent metrics.csv file
-        eval_log_files = glob("logs/train/runs/*/train.log")
+        eval_log_files = glob("logs/train/multiruns/*/*/train.log")
         latest_eval_log = max(eval_log_files, key=os.path.getctime)
         log_path = latest_eval_log.split("/train.log")[0]
         print("log_path-", log_path)

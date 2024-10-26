@@ -29,4 +29,4 @@ callbacks:
     mode: "max"
     save_top_k: 1
     save_last: True
-    filename: "/workspace/emlo4-session-07-ajithvcoder/model_storage/epoch-checkpoint.ckpt.ckpt"
+    filename: "/workspaces/emlo4-session-07-ajithvcoder/model_storage/epoch-checkpoint.ckpt.ckpt"
