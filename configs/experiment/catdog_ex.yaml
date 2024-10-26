@@ -64,3 +64,5 @@ callbacks:
     monitor: "val_acc"
     patience: 10
     mode: "max"
+
+optimization_metric: "test_acc"

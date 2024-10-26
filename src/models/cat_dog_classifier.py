@@ -96,7 +96,7 @@ class CatDogClassifier(L.LightningModule):
         loss = F.cross_entropy(logits, y)
         preds = F.softmax(logits, dim=1)
         preds_conf = torch.argmax(preds, dim=1)
-        self.val_acc(preds, y)
+        self.test_acc(preds, y)
         self.test_confusion(preds_conf, y)
         self.log("test_loss", loss, prog_bar=True, on_epoch=True)
         self.log("test_acc", self.test_acc, prog_bar=True, on_epoch=True)

@@ -53,6 +53,7 @@ def test(
     model: L.LightningModule,
     datamodule: L.LightningDataModule
 ):
+    test_metrics = {}
     log.info("Starting testing!")
     if cfg.callbacks.model_checkpoint.filename:
         log.info(
@@ -65,10 +66,13 @@ def test(
         log.warning("No checkpoint found! Using current model weights.")
         test_metrics = trainer.test(model, datamodule)
     log.info(f"Test metrics:\n{test_metrics}")
+    return  test_metrics[0] if test_metrics else test_metrics
 
 
 @hydra.main(version_base="1.3", config_path="../configs", config_name="eval")
 def eval(cfg: DictConfig):
+    # print(cfg.get("optimization_metric"))
+    # exit()
     log_dir = Path(cfg.paths.log_dir)
     
     setup_logger(log_dir/"eval_log.log")
@@ -95,9 +99,23 @@ def eval(cfg: DictConfig):
         callbacks=callbacks,
         logger=loggers,
     )
-    print(cfg)
+    # print(cfg)
+    # Train the model
+    test_metrics = {}
+
     if cfg.get("test"):
-        test(cfg, trainer, model, datamodule)
+        test_metrics = test(cfg, trainer, model, datamodule)
+
+    all_metrics = {**test_metrics}
+
+    # Extract and return the optimization metric
+    optimization_metric = all_metrics.get(cfg.get("optimization_metric"))
+    print("optimization_metric-", cfg.get("optimization_metric"), optimization_metric, all_metrics)
+    if optimization_metric is None:
+        log.warning(f"Optimization metric '{cfg.get('optimization_metric')}' not found in metrics. Returning 0.")
+        return 0.0
+    
+    return optimization_metric
 
 
 if __name__ == "__main__":

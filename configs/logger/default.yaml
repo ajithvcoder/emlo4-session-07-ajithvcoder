@@ -4,5 +4,5 @@ defaults:
   # - comet
   - csv
   - tensorboard
-  - aim
-  - mlflow
+  # - aim
+  # - mlflow

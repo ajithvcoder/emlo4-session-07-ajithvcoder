@@ -6,6 +6,8 @@ num_classes: 2
 pretrained: False
 depths: (1, 1, 2, 1)
 dims: (4, 8, 8, 16)
+patch_size: 8
+
 # Optimizer parameters
 lr: 1e-3
 weight_decay: 1e-5

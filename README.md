@@ -39,6 +39,51 @@ uv run python src/train.py --multirun experiment=catdog_ex model.embed_dim=16,32
 
 uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64
 
+testing
+uv run  python src/eval.py  --config-name=eval experiment=catdog_ex_eval
+uv run  python src/eval.py --multirun --config-name=eval experiment=catdog_ex_eval
+
+uv run  python src/train.py --multirun --config-name=train experiment=catdog_ex
+uv run python scripts/multirun_metrics_fetch.py
+
+# TODO:
+Make model lighter and add convnet
+AIM - aim up
+add below in resources file
+
+python src/train.py --multirun hparam=catdog_vit_hparam +trainer.log_every_n_steps=5 
+
+hydra.sweeper.n_jobs=4
+
+
+TODO:
+Your CI/CD Action will add a comment at the end with a list of all hparams, and it's test accuracy in a table format
+Plot combined metrics for all runs (val/loss & val/acc)
+
+aim - lightining
+aim up
+
+mlflow - lighting
+After training has run do below
+go into logs/ folder and then run ```uv run mlflow ui```
+# limit_train_batches: 0.1
+# limit_val_batches: 0.2
+# limit_test_batches: 0.3
+
+- write tests
+- Your CI/CD Action will add a comment at the end with a list of all hparams, and it's test accuracy in a table format
+logs/train/multiruns/timestamp/* -> get all train_log values in it and form a table - train_acc, val_acc, train_loss, val_loss
+logs/test/multiruns/sametimestamp/* -> get all test_log values in it and form a table - for each num merge with above dict
+logs/train/multiruns/timestamp/*(3(num))/csv/version_0/ -> hyperparams -> featch and form a dict
+
+{timestamp} -> latest timestamp in directory
+
+logs/train/multiruns/{timestamp}/*/metrics.csv -> get all train_log values in it which is in form of dic and form a table - train_acc, val_acc, train_loss, val_loss
+logs/test/multiruns/{timestamp}/*/metrics.csv -> get all test_log values in it and form a table - for each num merge with above dict
+logs/train/multiruns/{timestamp}/*/csv/version_0/ -> hyperparams.yml file -> featch and form a dict
+
+- next plotting
+
 **Note: I have completed the optional assignment of integrating comet-ml**
 
 - [Requirements](#requirements)
@@ -206,3 +251,5 @@ Note: I used Google cloud Storage bucket for this project as it was faster than 
 ### Group Members
 
 1. Ajith Kumar V (myself)
+2. Pravin Sagar
+3. Pratyush

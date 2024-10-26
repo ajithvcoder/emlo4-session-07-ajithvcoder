@@ -76,19 +76,19 @@ def test_task(
     datamodule: L.LightningDataModule
 ):
     log.info("Starting testing!")
-    if cfg.callbacks.model_checkpoint.filename:
+    log.info(f"test Check point {trainer.checkpoint_callback.best_model_path}")
+    if trainer.checkpoint_callback.best_model_path:
         log.info(
-            f"Loading best checkpoint: {cfg.callbacks.model_checkpoint.filename}"
+            f"Loading best checkpoint: {trainer.checkpoint_callback.best_model_path}"
         )
         test_metrics = trainer.test(
-            model, datamodule, ckpt_path=cfg.callbacks.model_checkpoint.filename
+            model, datamodule, ckpt_path=trainer.checkpoint_callback.best_model_path
         )
     else:
         log.warning("No checkpoint found! Using current model weights.")
         test_metrics = trainer.test(model, datamodule)
     log.info(f"Test metrics:\n{test_metrics}")
-
-
+    return  test_metrics[0] if test_metrics else test_metrics
 
 @hydra.main(version_base="1.3", config_path="../configs", config_name="train")
 def train(cfg: DictConfig):
@@ -131,15 +131,15 @@ def train(cfg: DictConfig):
     # Train the model
     if cfg.get("train"):
         train_metrics = train_task(cfg, trainer, model, datamodule)
-    print("train_metrics-", train_metrics)
-    # Test the model
+
     test_metrics = {}
+    # Test the model
     if cfg.get("test"):
         test_metrics = test_task(cfg, trainer, model, datamodule)
 
     # Combine metrics
-    # all_metrics = {**train_metrics, **test_metrics}
-    all_metrics = {**train_metrics}
+    all_metrics = {**train_metrics, **test_metrics}
+    # all_metrics = {**train_metrics}
 
     # Extract and return the optimization metric
     optimization_metric = all_metrics.get(cfg.get("optimization_metric"))
