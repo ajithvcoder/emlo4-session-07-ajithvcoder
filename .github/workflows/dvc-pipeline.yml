@@ -38,7 +38,7 @@ jobs:
 
       - name: Modify DVC Remote
         run: |
-          uv run dvc remote modify --local myremote1 credentialpath credentials_1.json
+          uv run dvc remote modify --local myremote credentialpath credentials_1.json
 
       - name: DVC Pull Data
         run: |
