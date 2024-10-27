@@ -208,7 +208,7 @@ Run details - [here](https://github.com/ajithvcoder/emlo4-session-07-ajithvcoder
 
 ![main workflow](./assets/snap_for_gitactions.png)
 
-**Comments from cml with plots and 10 infer images**
+**Comments from cml with hyperparam search table and plots**
 
 Details - [here](https://github.com/ajithvcoder/emlo4-session-07-ajithvcoder/commit/513718d673e8db5c8873b483c2ea7e68b11ee9d0#commitcomment-148403188)
 
