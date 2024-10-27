@@ -1,7 +1,7 @@
 [project]
-name = "emlo4-session-04-ajithvcoder"
+name = "emlo4-session-07-ajithvcoder"
 version = "0.1.0"
-description = "Use lightning to train, eval and infer a dataset"
+description = "Use lightning to hparamsearch, train, eval and infer a dataset"
 readme = "README.md"
 requires-python = "==3.11.7"
 dependencies = [
