@@ -1,4 +1,4 @@
-name: Train Test, Infer and Report
+name: HparamSearch, Train Test, Infer and Report
 on:
   workflow_call:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  train-test-infer-and-report:
+  hparamSearch-train-test-infer-and-report:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,7 +38,7 @@ jobs:
 
       - name: Modify DVC Remote
         run: |
-          uv run dvc remote modify --local myremote credentialpath credentials_1.json
+          uv run dvc remote modify myremote --local gdrive_service_account_json_file_path credentials_1.json
 
       - name: DVC Pull Data
         run: |
