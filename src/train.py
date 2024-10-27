@@ -24,6 +24,9 @@ load_dotenv("../.env")
 class CustomModelCheckpiont(ModelCheckpoint):
     def _save_checkpoint(self, trainer, filepath):
         trainer.lightning_module.save_transformed_model = True
+        filepath = filepath.split(".ckpt")[0]
+        filepath = f"{filepath}_patch_size-{trainer.model.patch_size}_embed_dim-{trainer.model.embed_dim}.ckpt"
+        print(f"File saved to {filepath}")
         super()._save_checkpoint(trainer, filepath)
         # print(filepath)
 
@@ -76,13 +79,16 @@ def test_task(
     datamodule: L.LightningDataModule
 ):
     log.info("Starting testing!")
-    log.info(f"test Check point {trainer.checkpoint_callback.best_model_path}")
-    if trainer.checkpoint_callback.best_model_path:
+    checkpoint_curr_best_model_path = trainer.checkpoint_callback.best_model_path.split(".ckpt")[0]
+    checkpoint_curr_best_model_path = f"{checkpoint_curr_best_model_path}_patch_size-{trainer.model.patch_size}_embed_dim-{trainer.model.embed_dim}.ckpt"
+    print(f"File saved to {checkpoint_curr_best_model_path}")
+    log.info(f"test Check point {checkpoint_curr_best_model_path}")
+    if checkpoint_curr_best_model_path:
         log.info(
-            f"Loading best checkpoint: {trainer.checkpoint_callback.best_model_path}"
+            f"Loading best checkpoint: {checkpoint_curr_best_model_path}"
         )
         test_metrics = trainer.test(
-            model, datamodule, ckpt_path=trainer.checkpoint_callback.best_model_path
+            model, datamodule, ckpt_path=checkpoint_curr_best_model_path
         )
     else:
         log.warning("No checkpoint found! Using current model weights.")

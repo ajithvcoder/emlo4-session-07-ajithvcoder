@@ -21,21 +21,9 @@ seed: 42
 data:
   batch_size: 128
   num_workers: 0
-  pin_memory: True
-
-# model:
-#   base_model: "test_vit.r160_in1k"
-#   num_classes: 2
-#   lr: 1e-3
-#   pretrained: False
-#   patch_size: 16
-#   embed_dim: 128
-#   depth: 6
-#   num_heads: 4
-#   mlp_ratio: 3
+  pin_memory: False
 
 model:
-  # model
   base_model: 'convnext_tiny'
   pretrained: False
   num_classes: 2
@@ -66,3 +54,9 @@ callbacks:
     mode: "max"
 
 optimization_metric: "test_acc"
+
+eval:
+  checkpoint_path_file: best_model_checkpoint.txt
+
+infer:
+  checkpoint_path_file: best_model_checkpoint.txt

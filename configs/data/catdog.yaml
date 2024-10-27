@@ -5,5 +5,5 @@ num_workers: 0
 batch_size: 256
 splits: [0.8, 0.1, 0.1]
 pin_memory: False
-# filenames: ["4.jpg", "13.jpg", "74.jpg", "57.jpg", "89.jpg", "61.jpg", "66.jpg", "93.jpg", "411.jpg", "527.jpg"]
+filenames: ["cat.2002.jpg", "cat.2012.jpg", "cat.2018.jpg", "cat.2030.jpg", "cat.2047.jpg", "dog.2010.jpg", "dog.2019.jpg", "dog.2048.jpg", "dog.2051.jpg", "dog.2053.jpg"]
 classes: {0: 'Cat', 1: 'Dog'}

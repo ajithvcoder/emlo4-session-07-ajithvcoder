@@ -3,16 +3,18 @@
 
 defaults:
   - _self_
-  - data: dogbreed
-  - model: dogbreed_classifier
+  - data: catdog
+  - model: cat_dog_classsifer
   - logger: default
   - paths: default
   - trainer: default
-  - hydra: default
   - callbacks: default
+  - hydra: default
+  - hparams: catdog_ex_vit_hparam
+
+  - experiment: catdog_ex
+
   - debug: null
-  # - override /callbacks: default
-  - experiment: dogbreed_ex
 
 task_name: "infer"
 tags: ["dev"]

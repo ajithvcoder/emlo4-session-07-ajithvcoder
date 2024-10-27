@@ -16,6 +16,8 @@ class CatDogClassifier(L.LightningModule):
         super().__init__()
         self.lr = lr
         self.num_classes = num_classes
+        self.patch_size = kwargs['patch_size']
+        self.embed_dim = kwargs['embed_dim']
         print(kwargs)
         # Load pre-trained ResNet18 model
         self.model = timm.create_model(base_model, pretrained=pretrained, 

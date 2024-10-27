@@ -80,7 +80,9 @@ def main():
     hyperparams_keys = hyperparams[0].keys()
     data[0].extend(metrics_keys)
     data[0].extend(hyperparams_keys)
-    for eachExp in train_metrics.keys():
+    exp_keys = list(train_metrics.keys())
+    exp_keys.sort()
+    for eachExp in exp_keys:
         exp_values = [eachExp]
         for each_param in metrics_keys:
             exp_values.append(train_metrics[eachExp][each_param])
@@ -102,6 +104,9 @@ def main():
 
     # Write the table to README.md
     with open("Report.md", "w") as f:
+        f.write("### Hyperparameters and test accuracy")
+        f.write("\n")
+        f.write("\n")
         f.write(table)
 
     # Extracting the experiment numbers, validation accuracies, and losses
@@ -132,7 +137,45 @@ def main():
         f.write("\n")
         f.write("\n")
         f.write("\n")
+        f.write("### Validation loss and validation accuracy plot")
+        f.write("\n")
         f.write("![validation_plot](./validation_plot.png)")
+
+
+    hyperparams_file = f"./logs/train/multiruns/{timestamp}/optimization_results.yaml"
+    if os.path.exists(hyperparams_file):
+        with open(hyperparams_file, 'r') as file:
+            hparams_data = yaml.safe_load(file)
+
+    exp_conf_file = f"./logs/train/multiruns/{timestamp}/0/.hydra/config.yaml"
+    if os.path.exists(exp_conf_file):
+        with open(exp_conf_file, 'r') as file:
+            exp_data = yaml.safe_load(file)
+
+    hparams_content = f"""
+### Optuna Hyperparameter Optimization 
+#### Experiment Name:  **{exp_data['experiment_name']}** 
+#### Best Parameters: 
+"""
+
+    # Loop through the 'best_params' dictionary to add all the parameters in a generic way
+    for param, value in hparams_data['best_params'].items():
+        hparams_content += f"- **{param}**: {value}\n"
+
+    # Add the best value (metric)
+    hparams_content += f"""
+## Best Value (Metric):
+**{round(float(hparams_data['best_value']), 4)}**
+"""
+
+    # Write to README.md
+    with open('Report.md', 'a') as f:
+        f.write("\n")
+        f.write("\n")
+        f.write(hparams_content)
+    
+    with open('best_model_checkpoint.txt', 'w') as f:
+        f.write(f"./model_storage/epoch-checkpoint_patch_size-{hparams_data['best_params']['model.patch_size']}_embed_dim-{hparams_data['best_params']['model.embed_dim']}.ckpt")
 
 if __name__ == "__main__":
     main()

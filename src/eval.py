@@ -55,12 +55,17 @@ def test(
 ):
     test_metrics = {}
     log.info("Starting testing!")
-    if cfg.callbacks.model_checkpoint.filename:
+    print(f"checkpoint path file {cfg.eval.checkpoint_path_file}")
+    optimized_checkpoint_filename = ""
+    with open(cfg.eval.checkpoint_path_file, 'r') as file:
+        optimized_checkpoint_filename = file.readline().strip() 
+
+    if optimized_checkpoint_filename:
         log.info(
-            f"Loading best checkpoint: {cfg.callbacks.model_checkpoint.filename}"
+            f"Loading best checkpoint: {optimized_checkpoint_filename}"
         )
         test_metrics = trainer.test(
-            model, datamodule, ckpt_path=cfg.callbacks.model_checkpoint.filename
+            model, datamodule, ckpt_path=optimized_checkpoint_filename
         )
     else:
         log.warning("No checkpoint found! Using current model weights.")

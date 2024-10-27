@@ -94,7 +94,7 @@ class CatDogImageDataModule(L.LightningDataModule):
         elif test:
             dataset = self.create_dataset(self.data_path.joinpath("test"), self.valid_transform)
         elif infer:
-            dataset = self.create_infer_dataset(self.data_path.joinpath(self._splits[1]), self._filenames, self.valid_transform)
+            dataset = self.create_infer_dataset(self.data_path.joinpath("test"), self._filenames, self.valid_transform)
             self._batch_size =  1
         print(len(dataset), "--train length", "batch size", self._batch_size)
         return DataLoader(dataset=dataset, batch_size=self._batch_size, num_workers=self._num_workers, shuffle=train)

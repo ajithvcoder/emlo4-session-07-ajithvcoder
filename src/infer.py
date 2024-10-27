@@ -77,16 +77,29 @@ def infer_task(
     datamodule: L.LightningDataModule
 ):
     log.info("Starting testing!")
-    if cfg.callbacks.model_checkpoint.filename:
+    print(f"checkpoint path file {cfg.infer.checkpoint_path_file}")
+    optimized_checkpoint_filename = ""
+    with open(cfg.eval.checkpoint_path_file, 'r') as file:
+        optimized_checkpoint_filename = file.readline().strip()
+
+    if optimized_checkpoint_filename:
         log.info(
-            f"Loading best checkpoint: {cfg.callbacks.model_checkpoint.filename}"
+            f"Loading best checkpoint: {optimized_checkpoint_filename}"
         )
         output = trainer.predict(
-            model, datamodule, ckpt_path=cfg.callbacks.model_checkpoint.filename
+            model, datamodule, ckpt_path=optimized_checkpoint_filename
         )
     else:
         log.warning("No checkpoint found! Using current model weights.")
-        output = trainer.predict(model, datamodule, ckpt_path=cfg.callbacks.model_checkpoint.filename)
+        output = trainer.predict(model, datamodule, ckpt_path=optimized_checkpoint_filename)
+
+    # Set the path for infer_images
+    infer_images_dir = Path("infer_images")
+    os.makedirs(infer_images_dir, exist_ok=True)
+    # Delete all files in infer_images/* if any exist
+    if infer_images_dir.exists() and infer_images_dir.is_dir():
+        for file in infer_images_dir.glob("*"):
+            file.unlink()  # Delete the file
 
     annotate_images(output, cfg.data.classes, "./infer_images")
 
