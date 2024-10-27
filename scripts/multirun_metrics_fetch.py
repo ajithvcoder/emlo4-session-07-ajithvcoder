@@ -103,7 +103,7 @@ def main():
     print(table)
 
     # Write the table to README.md
-    with open("Report.md", "w") as f:
+    with open("report.md", "w") as f:
         f.write("### Hyperparameters and test accuracy")
         f.write("\n")
         f.write("\n")
@@ -133,7 +133,7 @@ def main():
     plt.savefig('validation_plot.png')
 
     # Write the table to README.md
-    with open("Report.md", "a") as f:
+    with open("report.md", "a") as f:
         f.write("\n")
         f.write("\n")
         f.write("\n")
@@ -169,7 +169,7 @@ def main():
 """
 
     # Write to README.md
-    with open('Report.md', 'a') as f:
+    with open('report.md', 'a') as f:
         f.write("\n")
         f.write("\n")
         f.write(hparams_content)
