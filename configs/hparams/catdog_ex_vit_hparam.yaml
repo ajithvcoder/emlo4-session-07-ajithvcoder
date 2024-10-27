@@ -25,25 +25,22 @@ hydra:
     # Define the hyperparameters to optimize
     params:
         model.patch_size: choice(8, 16, 32)
-        model.embed_dim: choice(16, 32, 48)
+        model.embed_dim: choice(64, 96, 128)
     # model.num_heads: choice(2, 4, 8)
     # model.mlp_ratio: interval(2.0, 4.0)
   
-experiment:
-  name: vit_experiment_01
 
 # Other configurations
 data:
   batch_size: 128
 
 model:
-  base_model: 'test_convnext.r160_in1k'
+  base_model: 'convnext_tiny'
   pretrained: False
-  num_classes: 2
   patch_size: 16
-  embed_dim: 64
+  embed_dim: 128
   depth: 6
-  num_heads: 4
+  num_heads: 8
   mlp_ratio: 3
   lr: 1e-3
 

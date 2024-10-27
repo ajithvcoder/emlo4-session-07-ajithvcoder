@@ -7,7 +7,7 @@
 - [Requirements](#requirements)
 - [Development Method](#development-method)
     - [DVC Integration with Google Drive Storage](#dvc-integration-with-google-cloud-storage)
-    - [Integrate aim mlflow comet]
+    - [Integrate aim mlflow]
     - [Setting up hyperparam search config files]
     - [Multirun personalization and report generation]
     - [Github Actions Pipeline](#github-actions-with-dvc-pipeline-for-training)
@@ -32,9 +32,6 @@
 - Before running the experiments, see if your model works with your hyper parameters options
 - Use Cursor for suggesting the hyper parms and creating the hparams.yaml file
 
-**Optional Assignment**
-
-- Integrate `CometML` for logging
 
 ### Development Method
 
@@ -88,7 +85,7 @@ Comment in PR or commit on which github actions is running
 
 ### DVC Integration with Google Drive Storage
 
-- Download gdrive file manually -> use "uc?id=<drive-id>" -> gdown https://drive.google.com/uc?id=1V4awkaDGr8s1aI3VGoQUs1Ao6aF8_Os3
+- Download gdrive file manually -> `use "uc?id=<drive-id>"` -> `gdown https://drive.google.com/uc?id=1V4awkaDGr8s1aI3VGoQUs1Ao6aF8_Os3`
 
 - [Github Blog](https://github.com/ajithvcoder/dvc-gdrive-workflow-setup)
 - [Medium blog](https://medium.com/@ajithkumarv/setting-up-a-workflow-with-dvc-google-drive-and-github-actions-f3775de4bf63)
@@ -108,7 +105,7 @@ Comment in PR or commit on which github actions is running
 
 - Note: You can still add more dependecies and output in dvc.yaml file to improve the quality and relaiablity
 
-### Integrate AIM MLflow Comet
+### Integrate AIM MLflow
 
 - `AIM package` has a pytorch lighting integration so we can use that class in `__target__` of loggger.
  is already inegrated with pytorch lighting so we just need to add config files in "logger" folder and use proper api key for it.
@@ -181,30 +178,36 @@ Use a subset of train and test set for faster debugging and development. Also u 
 
 ### Learnings
 
-- Learnt about AIM, MLFlow tool usage, Comet ml, and multirun configurations and training.
+- Learnt about AIM, MLFlow tool usage and multirun configurations and training.
 
 ### Results [Change the assets]
 
 **MLFlow Dashboard**
 
+![MLFLow dashboard](./assets/snap_for_mlflow.png)
+
+![MLFLow compare dashboard](./assets/snap_compare_mlflow.png)
+
 **AIM Dashboard**
 
-**Comet-ML Dashboard**
+![AIM dashboard](./assets/snap_for_aim.png)
 
-![comet ml dashboard](./assets/snap_comet_ml.png)
+![AIM compare dashboard](./assets/snap_for_aim_multirun.png)
+
 
 **Work flow success on main branch**
 
-Run details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/actions/runs/11419499613)
+<!-- Run details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/actions/runs/11419499613) -->
 
-![main workflow](./assets/snap_main_workflow.png)
+<!-- ![main workflow](./assets/snap_main_workflow.png) -->
 
 **Comments from cml with plots and 10 infer images**
 
-Details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/pull/2#issuecomment-2424194445)
+<!-- Details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/pull/2#issuecomment-2424194445) -->
 
-![cml comment](./assets/snap_cml.png)
+<!-- ![cml comment](./assets/snap_cml.png) -->
 
+Note: The objective is to complete the requirements of assignment with minimal resource so i have reduced dataset and model size and this makes training faster.
 
 ### Group Members
 
