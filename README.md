@@ -2,18 +2,18 @@
 
 ### Contents
 
-**Note: In addition to the requirements i have also done eval and infer pipeline to fetch optimized model checkpoint automatically**
+**Note: In addition to the requirements I have also done eval and infer pipeline to fetch optimized model checkpoint automatically**
 
 - [Requirements](#requirements)
 - [Development Method](#development-method)
-    - [DVC Integration with Google Drive Storage](#dvc-integration-with-google-cloud-storage)
-    - [Integrate aim mlflow]
-    - [Setting up hyperparam search config files]
-    - [Multirun personalization and report generation]
-    - [Github Actions Pipeline](#github-actions-with-dvc-pipeline-for-training)
+    - [DVC Integration with Google Drive Storage](#dvc-integration-with-google-drive-storage)
+    - [Integrate aim mlflow](#integrate-aim-mlflow)
+    - [Setting up hyperparam search config files](#setting-up-hyperparam-search-config-files)
+    - [Multirun personalization and report generation](#multirun-personalization-and-report-generation)
+    - [Github Actions Pipeline](#github-actions-pipeline)
     - [Train-Test-Infer-Comment-CML](#train-test-infer-comment-cml)
 - [Learnings](#learnings)
-- [Results Screenshots](#results)
+- [Results Screenshots](#results-screenshots)
 
 ### Requirements
 
@@ -42,41 +42,48 @@
 - Adjust below params in trainer/default.yaml for reduced dataset training. You can even train with 10% of dataset but if step numbers 
 are low you may face problems in mlflow, aim loggings as it depends on step number for logging.
 
-```
-limit_train_batches: 0.6
-limit_val_batches: 0.9
-limit_test_batches: 0.9
-```
+    ```
+    limit_train_batches: 0.6
+    limit_val_batches: 0.9
+    limit_test_batches: 0.9
+    ```
 
 - Adjust below params in experiment/catdog_ex.yaml. Original model 27 million params and for reduced model it takes only 7.3k params
 
-```
-depths: (1, 1, 2, 1)
-dims: (4, 8, 8, 16)
-```
+    ```
+    depths: (1, 1, 2, 1)
+    dims: (4, 8, 8, 16)
+    ```
 
 
-- For faster development i have used absolute paths for github actions kindly change it using vscode search and proceed with
+- I didnt figure out a way for replacing absolute path. For faster development i have used absolute paths for github actions kindly change it using vscode search and proceed with
 `/workspaces/emlo4-session-07-ajithvcoder/`
 
-```
-/home/runner/work/emlo4-session-07-ajithvcoder/emlo4-session-07-ajithvcoder/ 
-```
+    ```
+    /home/runner/work/emlo4-session-07-ajithvcoder/emlo4-session-07-ajithvcoder/ 
+    ```
 
 - Developed with `uv package` in local
 
 
 **Hparam Search Train Test Infer Commands**
 
-Install
+**Install**
+
+```export UV_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu```
+
+OR 
 
 ```uv sync --extra-index-url https://download.pytorch.org/whl/cpu ```
 
-Pull data from cloud
+if you are going by `--extra-index-url` method you might need to give it every time when u use `uv` command
+
+
+**Pull data from cloud**
 
 ```dvc pull -r myremote```
 
-Trigger workflow
+**Trigger workflow**
 
 ```dvc repro```
 
@@ -116,7 +123,7 @@ Comment in PR or commit on which github actions is running
 - Comet-ML is already inegrated with pytorch lighting so we just need to add config files in "logger" folder and use proper api key for it.
 
 
-### Github Actions with DVC Pipeline for training
+### Github Actions Pipeline
 
 - setup cml, uv packages using github actions and install `python=3.11.7`
 - Copy the contents of credentials.json and store in github reprository secrets with name `GDRIVE_CREDENTIALS_DATA`
@@ -127,9 +134,9 @@ Comment in PR or commit on which github actions is running
 
 - For multi run in parallel below config can be used but the processor should be good to handle it else it will hang the system.
 
-```uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64```
+    ```uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64```
 
-**Multirun personalization and report generation**
+### Multirun personalization and report generation
 
 **In multirun scenario we can't give a generic checkpoint name for eval.py and infer.py**
 
@@ -180,7 +187,7 @@ Use a subset of train and test set for faster debugging and development. Also u 
 
 - Learnt about AIM, MLFlow tool usage and multirun configurations and training.
 
-### Results [Change the assets]
+### Results Screenshots
 
 **MLFlow Dashboard**
 
@@ -197,17 +204,17 @@ Use a subset of train and test set for faster debugging and development. Also u 
 
 **Work flow success on main branch**
 
-<!-- Run details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/actions/runs/11419499613) -->
+Run details - [here](https://github.com/ajithvcoder/emlo4-session-07-ajithvcoder/actions/runs/11539680917)
 
-<!-- ![main workflow](./assets/snap_main_workflow.png) -->
+![main workflow](./assets/snap_for_gitactions.png)
 
 **Comments from cml with plots and 10 infer images**
 
-<!-- Details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/pull/2#issuecomment-2424194445) -->
+Details - [here](https://github.com/ajithvcoder/emlo4-session-07-ajithvcoder/commit/513718d673e8db5c8873b483c2ea7e68b11ee9d0#commitcomment-148403188)
 
-<!-- ![cml comment](./assets/snap_cml.png) -->
+![cml comment](./assets/snap_for_comment.png)
 
-Note: The objective is to complete the requirements of assignment with minimal resource so i have reduced dataset and model size and this makes training faster.
+Note: The objective is to complete the requirements of assignment with minimal resource so i have reduced dataset and model size and this makes training faster and in turn it made the accuracy to decrease.
 
 ### Group Members
 
