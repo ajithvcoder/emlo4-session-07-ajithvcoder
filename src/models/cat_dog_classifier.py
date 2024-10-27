@@ -108,10 +108,11 @@ class CatDogClassifier(L.LightningModule):
         fig_, ax_ = self.test_confusion.plot()
         
         # Find the most recent metrics.csv file
-        eval_log_files = glob("logs/eval/runs/*/eval.log")
+        # saving to train itself may be for eval.py you can change this depending on config
+        eval_log_files = glob("logs/train/multiruns/*/*/train.log")
         latest_eval_log = max(eval_log_files, key=os.path.getctime)
-        log_path = latest_eval_log.split("/eval.log")[0]
-        print("log_path-", log_path)
+        log_path = latest_eval_log.split("/train.log")[0]
+        # print("log_path-", log_path)
         fig_.savefig(os.path.join(log_path, "test_confusion_matrix.png"))
 
         # Optionally, you can close the figure to free up memory
