@@ -1,116 +1,36 @@
-## EMLOV4-Session-06 Assignment - Data Version Control
+## EMLOV4-Session-07 Assignment - Experiment Tracking & Hyperparameter Optimization
 
 ### Contents
 
-Debug:
-docker build -t light_train_test -f ./Dockerfile .
-
-docker run -d -v /workspace/emlo4-session-07-ajithvcoder/:/workspace/ light_train_test 
-
-docker exec -it a72b75eb2280 /bin/bash
-
-giving previlage to user to access a folder in case if docker container locks it when mounting volume
-sudo chown $USER:$USER /workspace/emlo4-session-07-ajithvcoder/.dvc/config
-
-python src/train.py --multirun hparam=catdog_vit_hparam +trainer.log_every_n_steps=5 hydra.sweeper.n_jobs=4
-
-dvc commands
-
-uv dvc init -f
-uv run dvc remote add -d myremote gdrive://1ty6GJkbzN2ZmweDpG8yJGI8g3sEhKZus
-uv run dvc remote modify myremote gdrive_use_service_account true
-uv run dvc remote modify myremote gdrive_acknowledge_abuse true
-uv run dvc remote modify myremote --local gdrive_service_account_json_file_path credentials.json
-
-dvc remote add -d myremote gdrive://<your_gdrive_folder_id> 
-
-Download gdrive file manually -> use "uc?id="
-gdown https://drive.google.com/uc?id=1V4awkaDGr8s1aI3VGoQUs1Ao6aF8_Os3
-
-place to upload
-https://drive.google.com/drive/folders/1ty6GJkbzN2ZmweDpG8yJGI8g3sEhKZus?usp=sharing
-
-uv run dvc push -r myremote
-python src/train.py --multirun experiment=catdog_ex model.embed_dim=16,32,64 +trainer.log_every_n_steps=5
-
-uv run python src/train.py --config-name=train experiment=catdog_ex trainer.max_epochs=2
-
-uv run python src/train.py --multirun experiment=catdog_ex model.embed_dim=16,32 +trainer.log_every_n_steps=5
-
-uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64
-
-testing
-uv run  python src/eval.py  --config-name=eval experiment=catdog_ex_eval
-uv run  python src/eval.py --multirun --config-name=eval experiment=catdog_ex_eval
-
-uv run  python src/train.py --multirun --config-name=train experiment=catdog_ex
-uv run python scripts/multirun_metrics_fetch.py
-
-# TODO:
-Make model lighter and add convnet
-AIM - aim up
-add below in resources file
-
-python src/train.py --multirun hparam=catdog_vit_hparam +trainer.log_every_n_steps=5 
-
-hydra.sweeper.n_jobs=4
-
-
-TODO:
-Your CI/CD Action will add a comment at the end with a list of all hparams, and it's test accuracy in a table format
-Plot combined metrics for all runs (val/loss & val/acc)
-
-aim - lightining
-aim up
-
-mlflow - lighting
-After training has run do below
-go into logs/ folder and then run ```uv run mlflow ui```
-# limit_train_batches: 0.1
-# limit_val_batches: 0.2
-# limit_test_batches: 0.3
-
-- write tests
-- Your CI/CD Action will add a comment at the end with a list of all hparams, and it's test accuracy in a table format
-logs/train/multiruns/timestamp/* -> get all train_log values in it and form a table - train_acc, val_acc, train_loss, val_loss
-logs/test/multiruns/sametimestamp/* -> get all test_log values in it and form a table - for each num merge with above dict
-logs/train/multiruns/timestamp/*(3(num))/csv/version_0/ -> hyperparams -> featch and form a dict
-
-{timestamp} -> latest timestamp in directory
-
-logs/train/multiruns/{timestamp}/*/metrics.csv -> get all train_log values in it which is in form of dic and form a table - train_acc, val_acc, train_loss, val_loss
-logs/test/multiruns/{timestamp}/*/metrics.csv -> get all test_log values in it and form a table - for each num merge with above dict
-logs/train/multiruns/{timestamp}/*/csv/version_0/ -> hyperparams.yml file -> featch and form a dict
-
-- next plotting
-
-**Note: I have completed the optional assignment of integrating comet-ml**
+**Note: In addition to the requirements i have also done eval and infer pipeline to fetch optimized model checkpoint automatically**
 
 - [Requirements](#requirements)
 - [Development Method](#development-method)
-    - [DVC Integration with Google Cloud Storage](#dvc-integration-with-google-cloud-storage)
-    - [Integrate Comet ML](#integrate-comet-ml)
-    - [Github Actions with DVC Pipeline for training](#github-actions-with-dvc-pipeline-for-training)
+    - [DVC Integration with Google Drive Storage](#dvc-integration-with-google-cloud-storage)
+    - [Integrate aim mlflow comet]
+    - [Setting up hyperparam search config files]
+    - [Multirun personalization and report generation]
+    - [Github Actions Pipeline](#github-actions-with-dvc-pipeline-for-training)
     - [Train-Test-Infer-Comment-CML](#train-test-infer-comment-cml)
 - [Learnings](#learnings)
 - [Results Screenshots](#results)
 
 ### Requirements
 
-- Start with your repository from last session
-- Add this dataset: https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_5340.zip.
-- Add DVC Integration with Google Drive
-- Integrate CometML for logging
-- Create a Github Actions with DVC Pipeline for training
-- Train any ViT model for 5 epochs
-- Here are the Plots you will show
-    - train/acc and val/acc in one plot
-    - train/loss and val/loss in one plot
-    - Confusion Matrix for test dataset and train dataset as image plot
-- Infer on 10 images from test dataset and display the prediction, target along with image in results.md.
-    - You’ll be using your infer.py. script for this
-    - You can save the images in the predictions folder and then add them to the results.md.
-- Change Model to pretrained and create a PR
+- Your assignment is to Run Hyper Param Optimization with Github Actions
+- Your CI/CD Action will add a comment at the end with a list of all hparams, and it's test accuracy in a table format
+- Plot combined metrics for all runs (val/loss & val/acc)
+- Optimize Params for any of these models:
+    - https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/mambaout.py
+    - https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/convnext.py
+    - https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/volo.py
+- Dataset
+    - Any! Just don't choose a really large dataset
+    - You can use DVC, like the last assignment
+- Perform at least 10 experiments, choose a smaller model so it doesn't take time.
+- Each experiment should run for at least 2 epochs
+- Before running the experiments, see if your model works with your hyper parameters options
+- Use Cursor for suggesting the hyper parms and creating the hparams.yaml file
 
 **Optional Assignment**
 
@@ -122,13 +42,34 @@ logs/train/multiruns/{timestamp}/*/csv/version_0/ -> hyperparams.yml file -> fea
 
 **Debug Commands for development**
 
-```docker build -t light_train_test -f ./Dockerfile .```
+- Adjust below params in trainer/default.yaml for reduced dataset training. You can even train with 10% of dataset but if step numbers 
+are low you may face problems in mlflow, aim loggings as it depends on step number for logging.
 
-```docker run -d -v /workspace/emlo4-session-06-ajithvcoder/:/workspace/ light_train_test```
+```
+limit_train_batches: 0.6
+limit_val_batches: 0.9
+limit_test_batches: 0.9
+```
 
-```docker exec -it <c511d4e6ed1a9ca6933c67f02632a2> /bin/bash```
+- Adjust below params in experiment/catdog_ex.yaml. Original model 27 million params and for reduced model it takes only 7.3k params
 
-**Train Test Infer Commands**
+```
+depths: (1, 1, 2, 1)
+dims: (4, 8, 8, 16)
+```
+
+
+- For faster development i have used absolute paths for github actions kindly change it using vscode search and proceed with
+`/workspaces/emlo4-session-07-ajithvcoder/`
+
+```
+/home/runner/work/emlo4-session-07-ajithvcoder/emlo4-session-07-ajithvcoder/ 
+```
+
+- Developed with `uv package` in local
+
+
+**Hparam Search Train Test Infer Commands**
 
 Install
 
@@ -136,65 +77,89 @@ Install
 
 Pull data from cloud
 
-```dvc pull -r myremote1```
+```dvc pull -r myremote```
 
 Trigger workflow
 
 ```dvc repro```
 
-Comment in PR or commit
+Comment in PR or commit on which github actions is running
 ```cml comment create report.md```
 
-### DVC Integration with Google Cloud Storage
+### DVC Integration with Google Drive Storage
 
-- Follow first point in the `Using service account method `metioned here https://dvc.org/doc/user-guide/data-management/remote-storage/google-drive#using-service-accounts
-- Store the api key in local folder as `credentials.json` but dont commit it to github. if u do so github will raise a warning but inturn google notifies it
-and revokes the credentials.
-- Better to give `owner` permission/`storage admin` permission to the user account 
-- Create a folder in google bucket service and get the url for example - `gs://dvcmanager/storage` where `dvcmanager` is bucket name and `storage` is folder name
-- After structuring the train and test images in data folder
-- Run ```dvc init```
-- Now run `dvc remote add -d myremote gs://<mybucket>/<path>` command. Reference https://dvc.org/doc/user-guide/data-management/remote-storage/google-cloud-storage
-- Run ```dvc add data```
-- Run ```dvc push -r myremote1```
-- Wait for 10 minutes as its 800 MB and if its in github actions wait for 15 minutes.
-- Now add data.yml each and every step using ```dvc stage add``` command
+- Download gdrive file manually -> use "uc?id=<drive-id>" -> gdown https://drive.google.com/uc?id=1V4awkaDGr8s1aI3VGoQUs1Ao6aF8_Os3
 
-**Add Train, test, infer, report_generation stages**
+- [Github Blog](https://github.com/ajithvcoder/dvc-gdrive-workflow-setup)
+- [Medium blog](https://medium.com/@ajithkumarv/setting-up-a-workflow-with-dvc-google-drive-and-github-actions-f3775de4bf63)
 
-- `dvc stage add -f -n train -d configs/experiment/catdog_ex.yaml -d src/train.py -d data/cat_dog_medium python src/train.py --config-name=train experiment=catdog_ex trainer.max_epochs=5`
+**Add Train(Hparam search), test, infer, report_generation stages**
 
-- `dvc stage add -f -n test -d configs/experiment/catdog_ex_eval.yaml -d src/eval.py  python src/eval.py --config-name=eval experiment=catdog_ex_eval.yaml `
+- `uv run dvc stage add -f -n train -d configs/experiment/catdog_ex.yaml -d src/train.py -d data/cats_and_dogs_filtered python src/train.py --multirun --config-name=train experiment=catdog_ex trainer.max_epochs=3`
 
-- `dvc stage add -f -n infer -d configs/experiment/catdog_ex_eval.yaml -d src/infer.py python src/infer.py --config-name=infer experiment=catdog_ex_eval.yaml` 
+- `uv run dvc stage add -n report_genration python scripts/multirun_metrics_fetch.py`
 
-- `dvc stage add -n report_genration python scripts/metrics_fetch.py`
+- `uv run dvc stage add -f -n test -d configs/experiment/catdog_ex.yaml -d src/eval.py  python src/eval.py --config-name=eval experiment=catdog_ex`
+
+- `uv run dvc stage add -f -n infer -d configs/experiment/catdog_ex.yaml -d src/infer.py python src/infer.py --config-name=infer experiment=catdog_ex` 
+
 
 - You would have generated a `dvc.yaml` file, `data.dvc` file and `dvc.lock` file push all these to github
 
+- Note: You can still add more dependecies and output in dvc.yaml file to improve the quality and relaiablity
 
-### Integrate Comet ML
+### Integrate AIM MLflow Comet
+
+- `AIM package` has a pytorch lighting integration so we can use that class in `__target__` of loggger.
+ is already inegrated with pytorch lighting so we just need to add config files in "logger" folder and use proper api key for it.
+    - Use `uv run aim init` then `uv run aim up` before staring training and then run the training commands.
+
+- MLFlow is already inegrated with pytorch lighting so we just need to add config files in "logger" folder and use proper api key for it. After training has ran go into `logs/` folder which has `mlruns` and then run ```uv run mlflow ui```
 
 - Comet-ML is already inegrated with pytorch lighting so we just need to add config files in "logger" folder and use proper api key for it.
 
 
-
 ### Github Actions with DVC Pipeline for training
 
-- setup cml, uv packages using github actions and install `python=3.12`
+- setup cml, uv packages using github actions and install `python=3.11.7`
 - Copy the contents of credentials.json and store in github reprository secrets with name `GDRIVE_CREDENTIALS_DATA`
+
+### Setting up hyperparam search config files
+
+- `configs/hparams/` is used to store necesary parmaeters for hyper parameter searcg.
+
+- For multi run in parallel below config can be used but the processor should be good to handle it else it will hang the system.
+
+```uv run python src/train.py --multirun hydra/launcher=joblib hydra.launcher.n_jobs=4 experiment=catdog_ex model.embed_dim=16,32,64```
+
+**Multirun personalization and report generation**
+
+**In multirun scenario we can't give a generic checkpoint name for eval.py and infer.py**
+
+- In the `train.py` there is a class `CustomModelCheckpiont` which is used in `config/callbacks/model_checkpoint.yaml` is used to save the checkpoint file name with hparam config. example in this repo i have used `patch_size` and `embed_dim` for hyper param search so every checkpoint is stored with these contents as a filename. it could also be made more generic by using a for loop to fetch hyperparams and form a checkpoint file or giving a `uuid` for each runs final checkpoint.
+
+- After `train.py` is completed `scripts/multirun_metrics_fetch.py` is ran and it collects hyper params and its corresponding val_acc, val_loss, test_acc, test_loss and forms table and plots. At last it takes `optimization_results.yaml` and fetches the best hyperparameters and saves the checkpoint file name to `best_model_checkpoint.txt`
+
+- This `best_model_checkpoint.txt` is already stored in configs of eval and infer and its parsed and used when those configs are triggered
+
+**Model Classifier**
+
+- You can use `**kwargs` and import necessary configs related to `convnext` . Also you can feed the model necessary configs to it.
 
 ### Train-Test-Infer-Comment-CML
 
 **Debugging and development**
 
-Use a subset of train and test set for faster debugging and development. Also u can reduce the configs of model to generate a `custom 3 million param vit model`. I have reduced from 5 million params to 3 million params by using the config. However to run the pretrained model we can change this config.
+Use a subset of train and test set for faster debugging and development. Also u can reduce the configs of model to generate a `custom 7.5k param convnext model`. I have reduced from 27 million params to 7.3k params by using the config. 
 
 **Overall Run**
 - `dvc repro`
 
 **Train**
 - `dvc repro train`
+
+**Report**
+- `dvc repro report_generation`
 
 **Test**
 - `dvc repro test`
@@ -205,8 +170,7 @@ Use a subset of train and test set for faster debugging and development. Also u 
 **Create CML report**
 
 - Install cml pacakge
-- `python scripts/metrics_fetch.py` will fetch the necessary files needed for report and place it in root folder
-- `report_gen.sh`collects and appends every metric to readme file
+- `python scripts/multirun_metrics_fetch.py` will fetch the necessary files needed for report and log table and plots to report.md. Moreover it also creates a file `best_model_checkpoint.txt` which holds the **optimized configs checkpoint model**
 - cml tool is used to comment in github and it internally uses github token to authorize
 
 
@@ -217,9 +181,13 @@ Use a subset of train and test set for faster debugging and development. Also u 
 
 ### Learnings
 
-- Learnt about DVC tool usage, Comet ml, and cml
+- Learnt about AIM, MLFlow tool usage, Comet ml, and multirun configurations and training.
 
-### Results
+### Results [Change the assets]
+
+**MLFlow Dashboard**
+
+**AIM Dashboard**
 
 **Comet-ML Dashboard**
 
@@ -231,22 +199,12 @@ Run details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder
 
 ![main workflow](./assets/snap_main_workflow.png)
 
-**Work flow success run on PR branch**
-
-Run details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/actions/runs/11419924207)
-
-Pull request - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/pull/2)
-
-![pr triggered workflow](./assets/snap_pr_testing.png)
-
 **Comments from cml with plots and 10 infer images**
 
 Details - [here](https://github.com/ajithvcoder/emlo4-session-06-ajithvcoder/pull/2#issuecomment-2424194445)
 
 ![cml comment](./assets/snap_cml.png)
 
-
-Note: I used Google cloud Storage bucket for this project as it was faster than gdrive and its paid one so after successfully completing this assignment i am going to remove it. So you need to do the cloud setup again for re-running this experiment.
 
 ### Group Members
 
